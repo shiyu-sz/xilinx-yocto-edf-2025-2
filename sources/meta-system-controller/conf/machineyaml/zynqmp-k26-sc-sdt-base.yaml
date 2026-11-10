@@ -1,0 +1,23 @@
+args:
+    - --hw-description https://edf.amd.com/sswreleases/rel-v2025.2/sdt/2025.2.1/2025.2.1_0320_1_03201910/external/zynqmp-k26-sc-sdt-base/zynqmp-k26-sc-sdt-base_2025.2.1_0320_1_03201910.tar.gz
+    - --machine-name zynqmp-k26-sc-sdt-base
+    - -g full
+kconfig:
+
+machine:
+    pre:
+    post:
+        include:
+            comment: "Enable meta-xilinx-imgrcvry if available"
+            op: 'conf/enable-xilinx-imgrcvry.conf'
+        ENABLE_XEN_DTSI:zynqmp-k26-sc-sdt-base:
+            comment: This prevents inclusion of XEN dtsi into system.dtb
+            op: '='
+            val: ""
+        ENABLE_XEN_QEMU_DTSI:zynqmp-k26-sc-sdt-base:
+            op: '='
+            val: ""
+        CFLAGS:pn-image-selector:append:
+            comment: 'image-selector configuration settings'
+            op: '='
+            val: ' -DXIS_FWU_UPDATE  -DXIS_512G_FLASH  -DXIS_UART_ENABLE'
