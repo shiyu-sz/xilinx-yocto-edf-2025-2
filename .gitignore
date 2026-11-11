@@ -1,1 +1,15 @@
 build
+
+# Vivado generated output and local state. Keep the .xpr and .srcs tree.
+/vivado_project/*.cache/
+/vivado_project/*.gen/
+/vivado_project/*.hw/
+/vivado_project/*.ip_user_files/
+/vivado_project/*.runs/
+/vivado_project/*.sim/
+/vivado_project/.Xil/
+
+# Vivado session and upgrade logs.
+/vivado_project/*.jou
+/vivado_project/*.log
+/vivado_project/*.str
