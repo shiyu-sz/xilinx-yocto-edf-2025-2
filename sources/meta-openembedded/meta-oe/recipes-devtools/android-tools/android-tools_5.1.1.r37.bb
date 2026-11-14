@@ -51,7 +51,6 @@ SRC_URI = " \
     file://libselinux/0001-Remove-bionic-specific-calls.patch;patchdir=external/libselinux \
     file://libselinux/0001-libselinux-Do-not-define-gettid-if-glibc-2.30-is-use.patch;patchdir=external/libselinux \
     file://android-tools-adbd.service \
-    file://build/0001-Riscv-Add-risc-v-Android-config-header.patch;patchdir=build \
     file://gitignore \
     file://adb.mk;subdir=${BPN} \
     file://adbd.mk;subdir=${BPN} \

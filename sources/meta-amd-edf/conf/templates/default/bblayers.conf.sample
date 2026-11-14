@@ -20,6 +20,7 @@ BBLAYERS ?= " \
   ##OEROOT##/../meta-xilinx/meta-xilinx-core \
   ##OEROOT##/../meta-xilinx/meta-xilinx-standalone \
   ##OEROOT##/../meta-xilinx/meta-xilinx-standalone-sdt \
+  ##OEROOT##/../meta-xilinx-tools \
   ##OEROOT##/../meta-xilinx/meta-xilinx-multimedia \
   ##OEROOT##/../meta-xilinx/meta-xilinx-demos \
   ##OEROOT##/../meta-xilinx/meta-xilinx-virtualization \
