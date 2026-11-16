@@ -29,3 +29,6 @@ gen-machine-conf \
   --config-dir ../sources/meta-amd-edf/meta-amd-edf-bsp/conf \
   --localconf conf/local.conf \
   --xsct-tool $HOME/Xilinx_Install/2025.2/Vitis
+
+### 烧写到SD卡
+sudo dd if=./tmp/deploy/images/zynq-xc7z020-custom/edf-linux-disk-image-zynq-xc7z020-custom.rootfs.wic of=/dev/sdb bs=4M status=progress conv=fsync
