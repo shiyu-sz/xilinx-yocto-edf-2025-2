@@ -9,3 +9,9 @@ SRC_URI:append:zynq-xc7z020-custom = " \
     file://0001-clk-port-digilent-axi-dynclk-to-linux-6.12.patch \
     file://0002-drm-xlnx-connect-sii9022-and-enable-fbdev-io.patch \
 "
+
+# OV2640 DVP -> fixed RGB565 PL pipeline -> VDMA S2MM capture.
+SRC_URI:append:zynq-xc7z020-custom = " \
+    file://ov2640-camera.cfg \
+    file://0003-media-enable-ov2640-rgb565-vdma-capture.patch \
+"

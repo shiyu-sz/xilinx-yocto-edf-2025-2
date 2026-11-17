@@ -1,0 +1,58 @@
+/ {
+    /* clk_wiz_0: FCLK0 (100 MHz) -> 24 MHz, no AXI control registers. */
+    ov2640_xclk: ov2640-xclk {
+        compatible = "fixed-clock";
+        #clock-cells = <0>;
+        clock-frequency = <24000000>;
+        clock-output-names = "ov2640_xvclk";
+    };
+};
+
+&i2c0 {
+    status = "okay";
+
+    ov2640: camera@30 {
+        compatible = "ovti,ov2640";
+        reg = <0x30>;
+        /* LOCKED_O releases Camera_Data_0 and clk_wiz_0 from reset. */
+        clocks = <&ov2640_xclk>, <&axi_dynclk_0>;
+        clock-names = "xvclk", "pl-reset";
+        assigned-clocks = <&axi_dynclk_0>;
+        assigned-clock-rates = <74250000>;
+
+        /* Camera_Data_0 drives RESETB high and PWDN low in hardware. */
+        port {
+            ov2640_out: endpoint {
+                remote-endpoint = <&ov2640_vcap_in>;
+                bus-type = <5>; /* parallel DVP */
+                bus-width = <8>;
+                pclk-sample = <1>;
+                hsync-active = <1>;
+                vsync-active = <1>;
+            };
+        };
+    };
+};
+
+&amba_pl {
+    /* The intervening unpacker and RGB converters have no software controls. */
+    ov2640_vipp: ov2640-vipp {
+        compatible = "xlnx,video";
+        dmas = <&axi_vdma_0 1>; /* S2MM; HDMI owns MM2S channel 0. */
+        dma-names = "port0";
+
+        ports {
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            port@0 {
+                reg = <0>;
+                direction = "input";
+
+                ov2640_vcap_in: endpoint {
+                    remote-endpoint = <&ov2640_out>;
+                };
+            };
+        };
+    };
+};
