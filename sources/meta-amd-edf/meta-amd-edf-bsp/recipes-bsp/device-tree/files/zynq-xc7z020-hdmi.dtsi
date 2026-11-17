@@ -1,0 +1,93 @@
+/*
+ * DDR (RGB565) -> AXI VDMA MM2S -> rgb565to888 -> AXI4S video out
+ *             -> board RGB interface -> SII9022 (PS I2C1, 0x39) -> HDMI.
+ * Adapted from petalinux2020-1-acz702 commits 1a8ec47 and 75bb9a4.
+ */
+&axi_dynclk_0 {
+    compatible = "digilent,axi-dynclk";
+    #clock-cells = <0>;
+    clocks = <&clkc 15>;
+    clock-names = "ref_clk";
+    clock-output-names = "hdmi_pixel_clk";
+    status = "okay";
+};
+
+&v_tc_0 {
+    compatible = "xlnx,bridge-v-tc-6.1";
+    xlnx,pixels-per-clock = <1>;
+    clocks = <&clkc 15>, <&axi_dynclk_0>;
+    clock-names = "s_axi_aclk", "clk";
+    status = "okay";
+};
+
+&i2c1 {
+    status = "okay";
+
+    sii9022: hdmi-bridge@39 {
+        compatible = "sil,sii9022";
+        reg = <0x39>;
+
+        ports {
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            port@0 {
+                reg = <0>;
+                sii9022_in: endpoint {
+                    remote-endpoint = <&hdmi_output_out>;
+                };
+            };
+        };
+    };
+};
+
+&amba_pl {
+    hdmi_pl_disp: hdmi-pl-disp {
+        compatible = "xlnx,pl-disp";
+        dmas = <&axi_vdma_0 0>;
+        dma-names = "dma0";
+        xlnx,vformat = "RG16";
+        xlnx,bridge = <&v_tc_0>;
+
+        port {
+            hdmi_pl_out: endpoint {
+                remote-endpoint = <&hdmi_output_in>;
+            };
+        };
+    };
+
+    hdmi_output: hdmi-output {
+        compatible = "xlnx,drm-hdmi-output";
+
+        ports {
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            port@0 {
+                reg = <0>;
+                hdmi_output_in: endpoint {
+                    remote-endpoint = <&hdmi_pl_out>;
+                };
+            };
+
+            port@1 {
+                reg = <1>;
+                hdmi_output_out: endpoint {
+                    remote-endpoint = <&sii9022_in>;
+                };
+            };
+        };
+    };
+};
+
+&{/chosen} {
+    /* EDF's MMC boot script appends its root= argument to this string. */
+    bootargs = "earlycon console=ttyPS0,115200 video=HDMI-A-1:1280x720-16@60D";
+    stdout-path = "serial0:115200n8";
+};
+
+&{/aliases} {
+    /* The U-Boot generator otherwise selects the PL UART as serial0. */
+    serial0 = &uart1;
+    serial1 = &axi_uart16550_0;
+};
