@@ -29,6 +29,14 @@ modetest -M xlnx -s 34:1280x720-60@RG16
 sudo fb-test
 ```
 
+### LVGL 9.1 控件演示
+镜像配置已加入 LVGL 9.1.0 库和演示程序，使用 HDMI `/dev/fb0`、RGB565。
+首次编译需按下方说明准备完整源码归档。
+```sh
+sudo env LV_VIDEO_CARD=/dev/fb0 /usr/bin/lvgl
+```
+构建、联网开关和配置见 [LVGL 使用说明](docs/lvgl.md)。
+
 ### OV2640 摄像头
 默认 800×480、RGB565（`RGBP`）。更新完整 SD 镜像后在开发板测试：
 ```sh

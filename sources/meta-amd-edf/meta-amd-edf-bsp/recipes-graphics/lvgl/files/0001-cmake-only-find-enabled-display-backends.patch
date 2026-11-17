@@ -1,0 +1,37 @@
+Subject: [PATCH] cmake: only discover dependencies for enabled display backends
+
+The framebuffer backend does not need libdrm or SDL. Unconditional DRM
+lookup leaves NOTFOUND include and library paths in the main target,
+which prevents configuration when only fbdev is selected.
+
+Expose options so the recipe can match dependency lookup to PACKAGECONFIG.
+
+Upstream-Status: Pending
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -12,12 +12,19 @@
+ 
+ add_executable(main main.c mouse_cursor_icon.c)
+ 
+-include(${CMAKE_CURRENT_LIST_DIR}/lvgl/tests/FindLibDRM.cmake)
+-include_directories(${Libdrm_INCLUDE_DIRS})
++option(LV_PORT_USE_DRM "Enable DRM dependencies" OFF)
++option(LV_PORT_USE_SDL "Enable SDL dependencies" OFF)
+ 
+-find_package(SDL2)
+-find_package(SDL2_image)
+-include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
++if(LV_PORT_USE_DRM)
++    include(${CMAKE_CURRENT_LIST_DIR}/lvgl/tests/FindLibDRM.cmake)
++    include_directories(${Libdrm_INCLUDE_DIRS})
++endif()
++
++if(LV_PORT_USE_SDL)
++    find_package(SDL2)
++    find_package(SDL2_image)
++    include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
++endif()
+ 
+ target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${Libdrm_LIBRARIES} m pthread)
+ add_custom_target (run COMMAND ${EXECUTABLE_OUTPUT_PATH}/main DEPENDS main)
